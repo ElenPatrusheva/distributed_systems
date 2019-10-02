@@ -5,14 +5,19 @@ import glob
 clients = []
 
 def get_filename(filename):
+    """
+    returns filename for file to be written according to client info
+    and copies of this file on the server
+    """
     name, ext = filename.split('.')
     print(name + ext)
     original = glob.glob(filename)
     if len(original) == 0:
         return filename
+    # finds all the copies using regular expressions
     copies = glob.glob('{}_copy*[0-9].{}'.format(name, ext))
-    print(copies)
     return '{}_copy{}.{}'.format(name, len(copies)+1, ext)
+
 # Thread to listen one particular client
 class ClientListener(Thread):
     def __init__(self, name: str, sock: socket.socket):
@@ -27,11 +32,14 @@ class ClientListener(Thread):
         print(self.name + ' disconnected')
 
     def run(self):
+        # first 1024 bytes are used for the filename
         data = self.sock.recv(1024)
         filename = ''
         # first data part is for name of the file
+        # get filename
         if data:
             filename = data.decode('ascii')
+            # delete useless symbols
             filename = filename.rstrip('\x00')
         else:
             print('no data is given')
@@ -40,6 +48,7 @@ class ClientListener(Thread):
         new_filename = get_filename(filename)
         print('file "{}" will be written as "{}"'.format(filename, new_filename))
         with open(new_filename, 'wb') as f:
+            # just write chunks of data one by one
             while True:
                 # try to read 1024 bytes from user
                 # this is blocking call, thread will be paused here
@@ -47,6 +56,7 @@ class ClientListener(Thread):
                 if data:
                     f.write(data)
                 else:
+                    # no data anymore
                     self._close()
                     # finish the thread
                     return
