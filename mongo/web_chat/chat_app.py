@@ -9,7 +9,7 @@ db = client.chat_db
 while True:
     try:
         client.admin.command('ismaster')
-    except ConnectionFailure:
+    except:
         pass
     else:
         break
@@ -32,6 +32,4 @@ def get_form():
 def main_page():
     return render_template('index.html', messages=list_messages())
 
-
-if __name__ == '__main__':
-    app.run()
+app.run(host='0.0.0.0', port=5000)
