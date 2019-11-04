@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<body>
+<h1>Distributed Systems - Lab 9</h1>
+<h3><b>Vyacheslav Shults, B17-DS-01</b></h3>
+
+<form method="POST">
+    <input type="text" name="Sender" placeholder="Enter the name">
+    <input type="text" name="Message" placeholder="Your message">
+    <input type="submit" value="Send">
+</form>
+
+<ul>
+    {% for msg in messages %}
+    <li>
+        <div style="color: #ed0047;"><b>Name: </b>{{ msg['sender] }}:</div>
+        <div><b>Message: </b>{{ msg['message'] }}</div>
+    </li>
+    {% endfor %}
+</ul>
+</body>
+
